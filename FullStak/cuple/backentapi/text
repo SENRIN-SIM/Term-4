@@ -1,0 +1,115 @@
+<!-- namespace App\Http\Controllers;
+
+use App\Models\User;
+use Illuminate\Http\Request;
+
+class UserController extends Controller
+{
+    public function getUsersPostsComments()
+    {
+        // Fetch all users with their posts and comments
+        $users = User::with(['posts.comments', 'comments'])->get();
+
+        // Transform the data into the desired structure
+        $result = $users->map(function ($user) {
+            return [
+                'user_id' => $user->id,
+                'username' => $user->username,
+                'posts' => $user->posts->map(function ($post) {
+                    return [
+                        'post_id' => $post->id,
+                        'post_content' => $post->content,
+                        'comments' => $post->comments->map(function ($comment) {
+                            return [
+                                'comment_id' => $comment->id,
+                                'comment_text' => $comment->comment_text,
+                                'comment_user_id' => $comment->user_id,
+                            ];
+                        }),
+                    ];
+                }),
+                'comments' => $user->comments->map(function ($comment) {
+                    return [
+                        'comment_id' => $comment->id,
+                        'comment_text' => $comment->comment_text,
+                        'comment_post_id' => $comment->post_id,
+                    ];
+                }),
+            ];
+        });
+
+        // Return the transformed data as a JSON response
+        return response()->json($result);
+    }
+} -->
+
+
+================================================================
+
+
+public function user_details($user_id)
+{
+    try {
+        // Fetch user details along with their phones and addresses
+        $userData = DB::table('users')
+            ->join('phones', 'users.id', '=', 'phones.user_id')
+            ->join('addresses', 'users.id', '=', 'addresses.user_id')
+            ->where('users.id', '=', $user_id)
+            ->select(
+                'users.id as user_id',
+                'users.name',
+                'users.email',
+                'phones.id as phone_id',
+                'phones.brand',
+                'phones.model',
+                'addresses.id as address_id',
+                'addresses.street',
+                'addresses.city',
+                'addresses.country'
+            )
+            ->get();
+
+        if ($userData->isEmpty()) {
+            return response()->json([
+                'data' => null,
+                'success' => false,
+                'message' => 'User not found'
+            ], 404);
+        }
+
+        // Format the data
+        $formattedData = [
+            'id' => $userData[0]->user_id,
+            'name' => $userData[0]->name,
+            'email' => $userData[0]->email,
+            'phones' => $userData->map(function ($data) {
+                return [
+                    'id' => $data->phone_id,
+                    'brand' => $data->brand,
+                    'model' => $data->model,
+                ];
+            }),
+            'addresses' => $userData->map(function ($data) {
+                return [
+                    'id' => $data->address_id,
+                    'street' => $data->street,
+                    'city' => $data->city,
+                    'country' => $data->country,
+                ];
+            }),
+        ];
+
+        return response()->json([
+            'data' => $formattedData,
+            'success' => true,
+            'message' => 'Data retrieval successful'
+        ], 200);
+    } catch (\Exception $e) {
+        return response()->json([
+            'data' => null,
+            'success' => false,
+            'message' => $e->getMessage()
+        ], 500);
+    }
+}
+

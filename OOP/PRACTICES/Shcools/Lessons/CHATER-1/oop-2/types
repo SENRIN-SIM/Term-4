@@ -1,0 +1,27 @@
+3-UNIO of types!
+
+let name : string |boolean = "ronan"
+=> can be a string or a boolean
+
+let
+
+4-OBJECT type!(key and value object)
+
+let student : {x:number; y:number}= {x:45, y:55};
+=> an object composed of 2
+
+let student : {x:number; y:number}[] = [
+    {x:45, y:55},
+    {x:99, y:77}
+]
+
+5-ALIAS TYPES is that defind like object
+
+ex:
+before
+let sun: {name:string; age:number} = {name:'vum', age:12}
+
+after
+type Student = {name:string; age:number}
+let sun:Student= {name:'vun', age:17}
+

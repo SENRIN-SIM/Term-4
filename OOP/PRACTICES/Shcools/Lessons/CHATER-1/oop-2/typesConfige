@@ -1,0 +1,33 @@
+
+/*
+Configure build with [tsconfig.json]
+
+step 1: define a tsconfig file on root [tsc -init]
+step 3: got to tsconfig.json and then delete all code and add this code bellow:
+{
+ "compilerOptions": {
+  "outDir": "dist"
+ },
+ "include": ["./src/**/*"],
+// }
+
+/*
+step 3: run TSC on root [tsc]
+step 4: run node on dist folder [node dist/Main.js]
+
+
+
+
+while developin you can also use ts-node configure your code
+
+step 1: install ts-node (if not done yet)
+    npm install -g ts-node
+
+step 2: check your package is installed 
+    npm list -g
+
+step 2: run ts-node on root
+    ts-node src/Main.ts
+
+
+
